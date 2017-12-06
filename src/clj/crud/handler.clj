@@ -1,6 +1,7 @@
 (ns crud.handler
   (:require [compojure.core :refer [GET defroutes]]
             [compojure.route :refer [not-found resources]]
+            [crud.core :as core]
             [hiccup.page :refer [include-js include-css html5]]
             [config.core :refer [env]]))
 
