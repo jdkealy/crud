@@ -120,6 +120,7 @@
         params (or params {})]
     (method url
             {:format (edn/edn-request-format {:keywords? true})
+             :response-format (edn/edn-response-format)
              :params params
              :handler (fn [res]
                         (let [dict (assoc {} (:db/id res) res)]
@@ -156,12 +157,13 @@
 (defn update-item [{:keys [url atom accessor id ent params latency method]}]
   (let [method (or method POST)
         func (fn [] (method url {:format (edn/edn-request-format {:keywords? true})
-                              :response-format (edn/edn-response-format )
+                                :response-format (edn/edn-response-format )
                               :handler (fn [res]
                                          (swap! atom (fn [_at]
                                                        (let [item (merge
                                                                    (get-in _at [:dict id])
                                                                    (assoc res :loading false))]
+                                                         (println item res)
                                                          (assoc-in _at [:dict id ] item)))))
                               :params params}))]
     (swap! atom (fn [e] (assoc-in e [:dict id :loading] true)))
@@ -249,43 +251,3 @@
                    label
                    (+ 1 label))]]
                ) new-list)])]))
-
-(defn home-page []
-  [:div
-   [pagination 10 1000 (fn []) 10]
-   [:div ]])
-
-(defn about-page []
-  [:div [:h2 "About crud"]
-   [:div [:a {:href "/"} "go to the home page"]]])
-
-;; -------------------------
-;; Routes
-
-(def page (atom #'home-page))
-
-(defn current-page []
-  [:div [@page]])
-
-(secretary/defroute "/" []
-  (reset! page #'home-page))
-
-(secretary/defroute "/about" []
-  (reset! page #'about-page))
-
-;; -------------------------
-;; Initialize app
-
-(defn mount-root []
-  (reagent/render [current-page] (.getElementById js/document "app")))
-
-(defn init! []
-  (accountant/configure-navigation!
-    {:nav-handler
-     (fn [path]
-       (secretary/dispatch! path))
-     :path-exists?
-     (fn [path]
-       (secretary/locate-route path))})
-  (accountant/dispatch-current!)
-  (mount-root))

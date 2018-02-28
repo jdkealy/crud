@@ -1,6 +1,38 @@
 (ns crud.core)
 
 
+(defn concat-memo [current _new]
+  (let [oldq (:query current)
+        oldi (:inputs current)
+        newq (:query _new)
+        newi (:inputs _new)
+        _all {:query {:find (if-let [_find (:find newq)]
+                     (vec (concat (:find oldq) _find))
+                     (:find oldq))
+                      :in (if-let [_in (:in newq)]
+                            (vec (concat (:in oldq) _in))
+                            (:in oldq))
+                      :where (if-let [_where (:where newq)]
+                               (vec (concat (:where oldq) _where))
+                               (:where oldq)) }
+              :inputs (vec (concat oldi newi))}]
+    _all))
+
+(defn concat-query [inputs]
+  (vec (concat [(:query inputs)] (:inputs inputs))))
+
+
+(defn reduce-concat-query [input config initial-state & [{:keys [sort-by]}]]
+  (concat-query
+   (reduce (fn [memo item]
+             (let [_key item
+                   _val (get input _key)]
+               (concat-memo memo (config _key _val)))
+             ) initial-state (if sort-by
+                               (sort-by (keys input))
+                               (keys input)) )))
+
+
 (defn paginate-items [args _items]
   (let [pp (get args :pp 25 )
         pp (or pp 25)

@@ -1,4 +1,4 @@
-(defproject jdkealy/crud "0.1.2-SNAPSHOT"
+(defproject jdkealy/crud "0.1.5-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -8,17 +8,13 @@
                  [ring-server "0.5.0"]
                  [reagent "0.7.0"]
                  [cljs-ajax "0.7.2"]
-                 [reagent-utils "0.2.1"]
                  [ring "1.6.2"]
                  [ring/ring-defaults "0.3.1"]
                  [compojure "1.6.0"]
                  [hiccup "1.0.5"]
                  [yogthos/config "0.9"]
                  [org.clojure/clojurescript "1.9.946"
-                  :scope "provided"]
-                 [secretary "1.2.3"]
-                 [venantius/accountant "0.2.0"
-                  :exclusions [org.clojure/tools.reader]]]
+                  :scope "provided"]]
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]
